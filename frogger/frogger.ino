@@ -1,5 +1,7 @@
 #include <SPI.h>
-#include <GD.h>
+#include <Gameduino.h>
+
+#define circuit Gameduino_Computing_Shield  
 
 // Background http://gameduino.com/results/5f30d40b/
 // Sprites    http://gameduino.com/results/1d2bd1ca/
@@ -16,7 +18,7 @@ class Controller {
   public:
     void begin() {
       byte i;
-      for (i = 3; i < 7; i++) {
+      for (i = 5; i < 9; i++) {
         pinMode(i, INPUT);
         digitalWrite(i, HIGH);
       }
@@ -24,13 +26,13 @@ class Controller {
     }
     byte read() {
       byte r = 0;
-      if (!digitalRead(5))
-        r |= CONTROL_DOWN;
-      if (!digitalRead(4))
-        r |= CONTROL_UP;
       if (!digitalRead(6))
+        r |= CONTROL_DOWN;
+      if (!digitalRead(5))
+        r |= CONTROL_UP;
+      if (!digitalRead(7))
         r |= CONTROL_LEFT;
-      if (!digitalRead(3))
+      if (!digitalRead(8))
         r |= CONTROL_RIGHT;
       byte edge = r & ~prev;
       prev = r;
@@ -173,9 +175,10 @@ static int riverat(byte y, uint16_t tt)
 }
 
 // midi frequency table
-static PROGMEM prog_uint16_t midifreq[128] = {
+static uint16_t midifreq[128] = {
 32,34,36,38,41,43,46,48,51,55,58,61,65,69,73,77,82,87,92,97,103,110,116,123,130,138,146,155,164,174,184,195,207,220,233,246,261,277,293,311,329,349,369,391,415,440,466,493,523,554,587,622,659,698,739,783,830,880,932,987,1046,1108,1174,1244,1318,1396,1479,1567,1661,1760,1864,1975,2093,2217,2349,2489,2637,2793,2959,3135,3322,3520,3729,3951,4186,4434,4698,4978,5274,5587,5919,6271,6644,7040,7458,7902,8372,8869,9397,9956,10548,11175,11839,12543,13289,14080,14917,15804,16744,17739,18794,19912,21096,22350,23679,25087,26579,28160,29834,31608,33488,35479,37589,39824,42192,44701,47359,50175
 };
+
 #define MIDI(n) pgm_read_word(midifreq + (n))
 
 static void squarewave(uint16_t freq, byte amp)
